@@ -1,30 +1,45 @@
 Docker Build: 
-Sending build context to Docker daemon  4.155MB
+Sending build context to Docker daemon  30.12MB
 Step 1/8 : FROM golang AS builder
- ---> 00d970a31ef2
-Step 2/8 : WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/hello
+ ---> cdf8a7ac7476
+Step 2/8 : WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/gin
  ---> Using cache
- ---> ae4d3a07b71a
+ ---> 6ce7c1d10363
 Step 3/8 : COPY . .
- ---> 09094763a1c2
+ ---> 0babc34a612c
 Step 4/8 : RUN go get -d -v
- ---> Running in eb94c565efe1
-Removing intermediate container eb94c565efe1
- ---> 0870f41cfd45
-Step 5/8 : RUN CGO_ENABLED=0 go build -o /go/bin/hello
- ---> Running in a38b2d20c768
-Removing intermediate container a38b2d20c768
- ---> f83e11ed1965
+ ---> Running in f27d839ea817
+[91mgo: downloading github.com/gin-gonic/gin v1.6.3
+[0m[91mgo: downloading github.com/mattn/go-isatty v0.0.12
+[0m[91mgo: downloading github.com/gin-contrib/sse v0.1.0
+[0m[91mgo: downloading github.com/json-iterator/go v1.1.9
+[0m[91mgo: downloading github.com/go-playground/validator/v10 v10.2.0
+[0m[91mgo: downloading gopkg.in/yaml.v2 v2.2.8
+[0m[91mgo: downloading github.com/golang/protobuf v1.3.3
+[0m[91mgo: downloading github.com/ugorji/go v1.1.7
+[0m[91mgo: downloading golang.org/x/sys v0.0.0-20200116001909-b77594299b42
+[0m[91mgo: downloading github.com/ugorji/go/codec v1.1.7
+[0m[91mgo: downloading github.com/leodido/go-urn v1.2.0
+go: downloading github.com/go-playground/universal-translator v0.17.0
+[0m[91mgo: downloading github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742
+go: downloading github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421
+[0m[91mgo: downloading github.com/go-playground/locales v0.13.0
+[0mRemoving intermediate container f27d839ea817
+ ---> a447996ad3d8
+Step 5/8 : RUN CGO_ENABLED=0 go build -o /go/bin/gin
+ ---> Running in ff2ad21d5e5e
+Removing intermediate container ff2ad21d5e5e
+ ---> 523678aa911f
 Step 6/8 : FROM scratch
  ---> 
-Step 7/8 : COPY --from=builder /go/bin/hello /go/bin/hello
- ---> Using cache
- ---> f30824130d47
-Step 8/8 : ENTRYPOINT ["/go/bin/hello"]
- ---> Using cache
- ---> 1793b1a6a29b
-Successfully built 1793b1a6a29b
-Successfully tagged hello:latest
+Step 7/8 : COPY --from=builder /go/bin/gin /go/bin/gin
+ ---> 89b416f5859c
+Step 8/8 : ENTRYPOINT ["/go/bin/gin"]
+ ---> Running in 32c7ab7f2663
+Removing intermediate container 32c7ab7f2663
+ ---> 62965cbf4034
+Successfully built 62965cbf4034
+Successfully tagged gin:latest
 
 
 Saved to .tar file

@@ -2,6 +2,8 @@ package command
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 )
@@ -48,6 +50,51 @@ func Ll(dir string) string {
 	output := pwd + ll
 	return output
 }
+
+func DockerCreate(dir string, imageName string) error {
+	if dir == "" {
+		dir, _ = os.Getwd()
+	}
+	file, err := os.OpenFile(dir+"/Dockerfile", os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+		err := ioutil.WriteFile(dir+"/Dockerfile", []byte(`
+FROM golang AS builder
+
+WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/`+imageName+`
+
+COPY . .
+RUN go get -d -v
+RUN CGO_ENABLED=0 go build -o `+`/go/bin/`+imageName+`
+
+FROM scratch
+COPY --from=builder `+`/go/bin/`+imageName+` `+`/go/bin/`+imageName+` 
+ENTRYPOINT `+`["/go/bin/`+imageName+`"]`), 0644)
+		if err != nil {
+			log.Fatal(err)
+			return err
+		}
+	} else {
+		defer file.Close()
+		if _, err := file.WriteString(`
+FROM golang AS builder
+
+WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/` + imageName + `
+
+COPY . .
+RUN go get -d -v
+RUN CGO_ENABLED=0 go build -o ` + `/go/bin/` + imageName + `
+
+FROM scratch
+COPY --from=builder ` + `/go/bin/` + imageName + ` ` + `/go/bin/` + imageName + ` 
+ENTRYPOINT ` + `["/go/bin/` + imageName + `"]`); err != nil {
+			log.Fatal(err)
+			return err
+		}
+	}
+	return err
+}
+
 func DockerBuild(dir string, imageName string) string {
 	if dir == "" {
 		dir, _ = os.Getwd()

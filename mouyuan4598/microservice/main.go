@@ -72,6 +72,12 @@ func buildHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		var temp string
+		err = os.Remove(key + "/Dockerfile")
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		command.DockerCreate(key, key[b+1:])
+
 		temp = command.DockerBuild(key, key[b+1:])
 		save("status.txt", temp)
 		temp = command.DockerSave(key, key[b+1:])

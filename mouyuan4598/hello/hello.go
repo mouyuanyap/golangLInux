@@ -9,6 +9,6 @@ import (
 func main() {
 	arr := []int{4, 2, 1, 5, 3}
 	array := bubblesort.Sort(arr)
-	fmt.Println("arrayyy")
+	fmt.Println("array")
 	fmt.Println(array)
 }

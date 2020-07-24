@@ -1,0 +1,26 @@
+ARG project_name
+
+FROM golang AS builder
+
+ARG project_name
+
+WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/gin
+COPY . .
+# Fetch dependencies.
+# Using go get.
+RUN go get -d -v
+
+RUN CGO_ENABLED=0 go build -o ${project_name}
+# Build the binary.$project_name
+############################
+# STEP 2 build a small image
+############################
+FROM scratch
+# Copy our static executable.
+ARG project_name
+ENV project_name ${project_name}
+
+COPY --from=builder ${project_name} ${project_name}
+
+# Run the hello binary.
+ENTRYPOINT ${project_name}
