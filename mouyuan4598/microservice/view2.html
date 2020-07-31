@@ -1,7 +1,205 @@
+<style>
+input {
+  min-width:50px!important;
+  max-width:99.99%!important;
+  transition: width 0.25s;
+  text-align:center;
+}
+</style>
+
+<body>
 <h1>{{.Title}}</h1>
 
-<div>{{printf "%s" .Body}}</div>
+{{$body := .Body}}
+{{$dir := .Directory}}
+{{$ftypye := .FileType}}
+<form method="POST" action="/build/"> 
+{{range $key, $value := $body}}
+    <div><strong>{{ $key }}</strong>: {{range $value }}<li>{{.}} </li>{{end}}<br></div>
 
-<a href="/build/" onclick="window.open('../status/', '_blank', 'location=yes,height=570,width=520scrollbars=yes,status=yes');">
+
+<div>
+    <p style="font-weight: bold;">Dockerfile</p>
+    <p ></p>
+    {{range $key3, $value3 := $ftypye}}
+    {{if eq $key $key3}}
+        {{if eq $value3 "go"}}
+        <table>
+            <tr>
+                <td><label>From</label></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}1" name="language" type="text" value="golang" /><br></td>
+                <td><label>as builder</label></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><label>WORKDIR</label></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}2"  name="address" type="text" value={{$key}} /><br></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><label>COPY</label></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}3"  name="copyFrom" type="text" value="." /><br></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}4"  name="copyTo" type="text" value="." /></td>
+            </tr>
+        </table>    
+        
+        <table>
+            <tr>
+                <td><label>RUN</label></td>
+                <td><label>go get -d -v</label><br></td>
+            </tr>
+            <tr>
+                <td><label>RUN</label></td>
+                <td><label>CGO_ENABLED=0 go build -o</label></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}5"  name="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}buildName" type="text" value="/go/bin/{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}"  /></td>
+                <td><-- click</td>
+            </tr>
+        </table>   
+
+        <table>
+            <tr>
+                <td><label>FROM</label></td>
+                <td><label>scratch</label><br></td>
+            </tr>
+        </table>
+
+        <table id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}aa">
+            <tr>
+                <td><label>COPY</label></td>
+                <td><label>--from=builder</label></td>
+                <td id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}aaa"></td>
+                <td id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}bbb"><br></td>
+            </tr>
+        </table>
+        
+        <table>
+            <tr>
+                <td><label>ENTRYPOINT</label></td>
+                <td><label>["</label></td>
+                <td id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}ccc"><label></label></td>
+                <td><label>"]</label><br></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <br><br>
+                <td>ImageName: </td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}6" name="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}imageName" type="text" value="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}" /></td>
+            </tr>
+        </table>
+        <br><br>
+        <script>
+            const {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}input = document.querySelector('#{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}5');
+            const {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}log1 = document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}aaa');
+            const {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}log2 = document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}bbb');
+            const {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}log3 = document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}ccc');
+            {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}input.addEventListener('click', updateValue);
+            {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}input.addEventListener('input', updateValue);
+            function updateValue(e) {
+                {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}log1.textContent = e.target.value;
+                {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}log2.textContent = e.target.value;
+                {{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}log3.textContent = e.target.value;
+            }
+            function resizable (el, factor) {
+                var int = Number(factor) || 7.7;
+                function resize() {el.style.width = ((el.value.length+1) * int) + 'px'}
+                var e = 'keyup,keypress,focus,blur,change'.split(',');
+                for (var i in e) el.addEventListener(e[i],resize,false);
+                resize();
+            }
+            
+            
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}1'),8);
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}2'),8);
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}3'),8);
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}4'),8);
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}5'),8);
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}6'),8);
+            </script>
+
+
+        {{else if eq $value3 "py"}}
+        <table>
+            <tr>
+                <td><label>From</label></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}1" name="language" type="text" value="python:3.8-slim-buster" /><br></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><label>WORKDIR</label></td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}2"  name="address" type="text" value={{$key}} /><br></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td><label>COPY</label></td>
+                <td><label>requirements.txt ./</label><br></td>
+            </tr>
+            <tr>
+                <td><label>RUN</label></td>
+                <td><label>pip install --no-cache-dir -r requirements.txt</label><br></td>
+            </tr>
+            <tr>
+                <td><label>COPY</label></td>
+                <td><label>. .</label><br></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td><label>CMD</label></td>
+                <td><label>["</label></td>
+                <td><label>python", "./</label></td>
+                <td><label>{{range $value}}{{.}}{{end}}</label></td>
+                <td><label>"]</label><br></td>
+            </tr>
+        </table>
+        <br>
+        <table>
+            <tr>
+                <br>
+                <td>PythonFile: </td>
+                <td><input id="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}6" name="{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}imageName" type="text" value="{{range $value}}{{.}}{{end}}" /></td>
+            </tr>
+        </table>
+        <br>
+        <script>
+            function resizable (el, factor) {
+                var int = Number(factor) || 7.7;
+                function resize() {el.style.width = ((el.value.length+1) * int) + 'px'}
+                var e = 'keyup,keypress,focus,blur,change'.split(',');
+                for (var i in e) el.addEventListener(e[i],resize,false);
+                resize();
+            }
+            
+            
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}1'),8);
+            resizable(document.getElementById('{{range $key2,$value2 := $dir}}{{if eq $key $key2}}{{$value2}}{{end}}{{end}}2'),8);
+            </script>
+
+        {{end}}
+        {{end}}
+        {{end}}
+        
+            
+        
+            
+            
+        
+    
+</div>
+
+
+<!-- <a href="/build/" onclick="window.open('../status/', '_blank', 'location=yes,height=570,width=520scrollbars=yes,status=yes');">
     Build
-</a>
+</a> -->
+</body>
+
+
+{{end}}
+<input type="submit" value="submit" onclick="window.open('../status/', '_blank', 'location=yes,height=570,width=520scrollbars=yes,status=yes');"/><br>
+</form>

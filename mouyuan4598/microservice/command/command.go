@@ -51,47 +51,88 @@ func Ll(dir string) string {
 	return output
 }
 
-func DockerCreate(dir string, imageName string) error {
+func DockerCreate(dir string, imageName string, buildName string, fileType string, fileChange []string) error {
 	if dir == "" {
 		dir, _ = os.Getwd()
 	}
 	file, err := os.OpenFile(dir+"/Dockerfile", os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Println(err)
-		err := ioutil.WriteFile(dir+"/Dockerfile", []byte(`
+	if fileType == "go" {
+
+		if err != nil {
+			log.Println(err)
+			err := ioutil.WriteFile(dir+"/Dockerfile", []byte(`
 FROM golang AS builder
 
 WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/`+imageName+`
 
 COPY . .
 RUN go get -d -v
-RUN CGO_ENABLED=0 go build -o `+`/go/bin/`+imageName+`
+RUN CGO_ENABLED=0 go build -o `+buildName+`
 
 FROM scratch
-COPY --from=builder `+`/go/bin/`+imageName+` `+`/go/bin/`+imageName+` 
-ENTRYPOINT `+`["/go/bin/`+imageName+`"]`), 0644)
-		if err != nil {
-			log.Fatal(err)
-			return err
-		}
-	} else {
-		defer file.Close()
-		if _, err := file.WriteString(`
+COPY --from=builder `+buildName+` `+buildName+` 
+ENTRYPOINT `+`["`+buildName+`"]`), 0644)
+			if err != nil {
+				log.Fatal(err)
+				return err
+			}
+		} else {
+			defer file.Close()
+			if _, err := file.WriteString(`
 FROM golang AS builder
-
+		
 WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/` + imageName + `
-
+		
 COPY . .
 RUN go get -d -v
-RUN CGO_ENABLED=0 go build -o ` + `/go/bin/` + imageName + `
-
+RUN CGO_ENABLED=0 go build -o ` + buildName + `
+		
 FROM scratch
-COPY --from=builder ` + `/go/bin/` + imageName + ` ` + `/go/bin/` + imageName + ` 
-ENTRYPOINT ` + `["/go/bin/` + imageName + `"]`); err != nil {
-			log.Fatal(err)
-			return err
+COPY --from=builder ` + buildName + ` ` + buildName + ` 
+ENTRYPOINT ` + `["` + buildName + `"]`); err != nil {
+				log.Fatal(err)
+				return err
+			}
 		}
+
+	} else if fileType == "py" {
+		if err != nil {
+			log.Println(err)
+			err := ioutil.WriteFile(dir+"/Dockerfile", []byte(`
+FROM python:3.8-slim-buster
+
+WORKDIR `+dir+`
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+ 
+CMD `+`["python", "./`+fileChange[0][:len(fileChange[0])]+`"]`), 0644)
+			if err != nil {
+				log.Fatal(err)
+				return err
+			}
+		} else {
+			defer file.Close()
+			if _, err := file.WriteString(`
+FROM python:3.8-slim-buster
+			
+WORKDIR ` + dir + `
+			
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+			
+COPY . .
+			 
+CMD ` + `["python", "./` + fileChange[0][:len(fileChange[0])] + `"]`); err != nil {
+				log.Fatal(err)
+				return err
+			}
+		}
+
 	}
+
 	return err
 }
 

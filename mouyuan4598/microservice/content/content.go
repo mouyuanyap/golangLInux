@@ -7,24 +7,27 @@ import (
 	"log"
 	"os"
 
-	"github.com/fsnotify/fsnotify"
+	"github.com/dietsche/rfsnotify"
+	"gopkg.in/fsnotify.v1"
 )
 
 type Page struct {
-	Title string
-	Body  map[string]string
-	File  []byte
+	Title     string
+	Body      map[string][]string
+	File      []byte
+	Directory map[string]string
+	FileType  map[string]string
 }
 
 func Read(filename string) *Page {
 	if filename == "change" {
 		file, err := os.Open(filename + ".txt")
 		if err != nil {
-			m := make(map[string]string)
+			m := make(map[string][]string)
 			return &Page{Title: "Change", Body: m}
 		}
 		defer file.Close()
-		item := make(map[string]string)
+		item := make(map[string][]string)
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			line := scanner.Text()
@@ -39,8 +42,19 @@ func Read(filename string) *Page {
 					break
 				}
 			}
-			if item[line[:b]] == "" {
-				item[line[:b]] = line[a+1:]
+			if len(item[line[:b]]) > 0 {
+				found := false
+				for _, x := range item[line[:b]] {
+					if x == line[b+1:a] {
+						found = true
+						break
+					}
+				}
+				if found == false {
+					item[line[:b]] = append(item[line[:b]], line[b+1:a])
+				}
+			} else {
+				item[line[:b]] = append(item[line[:b]], line[b+1:a])
 			}
 
 		}
@@ -50,7 +64,42 @@ func Read(filename string) *Page {
 		if err := scanner.Err(); err != nil {
 			log.Fatal(err)
 		}
-		return &Page{Title: "Change", Body: item}
+		dir := make(map[string]string)
+		for key := range item {
+			var b int
+			base := len("/home/mouyuan/go/src/github.com/mouyuan4598")
+			for i := base + 1; i < len(key); i++ {
+				//fmt.Print(i)
+				//fmt.Println(string(key[i]))
+				if key[i] == '/' {
+					b = i
+					break
+				}
+				if i == len(key)-1 {
+					b = i + 1
+				}
+			}
+			dir[key] = key[base+1 : b]
+			//fmt.Println(base)
+			//fmt.Println(b)
+		}
+		ty := make(map[string]string)
+		for key, value := range item {
+			var y, z int
+			for i := 0; i < len(value); i++ {
+				for j := 0; j < len(value[i]); j++ {
+
+					if value[i][j] == '.' {
+						y = i
+						z = j
+						break
+					}
+				}
+			}
+			ty[key] = value[y][z+1 : len(value[y])]
+		}
+
+		return &Page{Title: "Change", Body: item, Directory: dir, FileType: ty}
 
 	} else if filename == "status" {
 		body, err := ioutil.ReadFile(filename + ".txt")
@@ -59,7 +108,7 @@ func Read(filename string) *Page {
 		}
 		return &Page{Title: "Status", File: body}
 	} else {
-		m := make(map[string]string)
+		m := make(map[string][]string)
 		return &Page{Title: "Error", Body: m}
 	}
 
@@ -86,7 +135,7 @@ func save(filename string, content [2]string) error {
 }
 
 func Change() {
-	watcher, err := fsnotify.NewWatcher()
+	watcher, err := rfsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -123,9 +172,9 @@ func Change() {
 		}
 	}()
 
-	err = watcher.Add("/home/mouyuan/go/src/github.com/mouyuan4598/gin")
-	err = watcher.Add("/home/mouyuan/go/src/github.com/mouyuan4598/hello")
-	err = watcher.Add("/home/mouyuan/go/src/github.com/mouyuan4598/server")
+	err = watcher.AddRecursive("/home/mouyuan/go/src/github.com/mouyuan4598/gin")
+	err = watcher.AddRecursive("/home/mouyuan/go/src/github.com/mouyuan4598/hello")
+	err = watcher.AddRecursive("/home/mouyuan/go/src/github.com/mouyuan4598/py")
 	if err != nil {
 		log.Fatal(err)
 	}

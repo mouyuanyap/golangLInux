@@ -1,52 +1,43 @@
 Docker Build: 
-Sending build context to Docker daemon  30.12MB
+Sending build context to Docker daemon  60.17MB
 Step 1/8 : FROM golang AS builder
  ---> cdf8a7ac7476
 Step 2/8 : WORKDIR /home/mouyuan/go/src/github.com/mouyuan4598/gin
  ---> Using cache
  ---> 6ce7c1d10363
 Step 3/8 : COPY . .
- ---> 0babc34a612c
+ ---> 0fb4b3618122
 Step 4/8 : RUN go get -d -v
- ---> Running in f27d839ea817
+ ---> Running in 6d8b7ae062c2
 [91mgo: downloading github.com/gin-gonic/gin v1.6.3
-[0m[91mgo: downloading github.com/mattn/go-isatty v0.0.12
+[0m[91mgo: downloading github.com/golang/protobuf v1.3.3
 [0m[91mgo: downloading github.com/gin-contrib/sse v0.1.0
+[0m[91mgo: downloading gopkg.in/yaml.v2 v2.2.8
+[0m[91mgo: downloading github.com/ugorji/go v1.1.7
+[0m[91mgo: downloading github.com/ugorji/go/codec v1.1.7
 [0m[91mgo: downloading github.com/json-iterator/go v1.1.9
 [0m[91mgo: downloading github.com/go-playground/validator/v10 v10.2.0
-[0m[91mgo: downloading gopkg.in/yaml.v2 v2.2.8
-[0m[91mgo: downloading github.com/golang/protobuf v1.3.3
-[0m[91mgo: downloading github.com/ugorji/go v1.1.7
+[0m[91mgo: downloading github.com/mattn/go-isatty v0.0.12
 [0m[91mgo: downloading golang.org/x/sys v0.0.0-20200116001909-b77594299b42
-[0m[91mgo: downloading github.com/ugorji/go/codec v1.1.7
 [0m[91mgo: downloading github.com/leodido/go-urn v1.2.0
-go: downloading github.com/go-playground/universal-translator v0.17.0
-[0m[91mgo: downloading github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742
-go: downloading github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421
+[0m[91mgo: downloading github.com/go-playground/universal-translator v0.17.0
+[0m[91mgo: downloading github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421
+go: downloading github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742
 [0m[91mgo: downloading github.com/go-playground/locales v0.13.0
-[0mRemoving intermediate container f27d839ea817
- ---> a447996ad3d8
+[0mRemoving intermediate container 6d8b7ae062c2
+ ---> c529e0d2a9ee
 Step 5/8 : RUN CGO_ENABLED=0 go build -o /go/bin/gin
- ---> Running in ff2ad21d5e5e
-Removing intermediate container ff2ad21d5e5e
- ---> 523678aa911f
+ ---> Running in 7cf9635a6fd4
+Removing intermediate container 7cf9635a6fd4
+ ---> d10e8af530de
 Step 6/8 : FROM scratch
  ---> 
 Step 7/8 : COPY --from=builder /go/bin/gin /go/bin/gin
- ---> 89b416f5859c
+ ---> Using cache
+ ---> 54a4cc64c959
 Step 8/8 : ENTRYPOINT ["/go/bin/gin"]
- ---> Running in 32c7ab7f2663
-Removing intermediate container 32c7ab7f2663
- ---> 62965cbf4034
-Successfully built 62965cbf4034
+ ---> Using cache
+ ---> 4e358ca3404b
+Successfully built 4e358ca3404b
 Successfully tagged gin:latest
 
-
-Saved to .tar file
-
-
-Sent to Destination Machine
-
-
-
-Finished successfully

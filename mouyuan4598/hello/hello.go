@@ -7,8 +7,10 @@ import (
 )
 
 func main() {
-	arr := []int{4, 2, 1, 5, 3}
+	arr := []int{9, 7, 1, 5, 3}
 	array := bubblesort.Sort(arr)
-	fmt.Println("array")
+	var str string
+	fmt.Scanln(&str)
+	fmt.Println("array: " + str)
 	fmt.Println(array)
 }
